@@ -18,7 +18,7 @@ elseif (!defined('SMF'))
 
 $hooks = array(
 	'integrate_pre_include' => '$sourcedir/Subs-MobileDetect.php',
-	'integrate_pre_load' => 'setThemeForMobileDevices',
+	'integrate_verify_user' => 'setThemeForMobileDevices',
 );
 
 if (SMF == 'SSI' && (!isset($_GET['action']) || (isset($_GET['action']) && !in_array($_GET['action'], array('install', 'uninstall')))))
