@@ -103,6 +103,15 @@ class uagent_info
 	var $isTierRichCss = 0; //Stores whether the device can probably support Rich CSS, but JavaScript support is not assumed. (e.g., newer BlackBerry, Windows Mobile)
 	var $isTierGenericMobile = 0; //Stores whether it is another mobile device, which cannot be assumed to support CSS or JS (eg, older BlackBerry, RAZR)
 
+	// These strings cannot be used in isMobile because are way too generic
+	var $genericStrings = array(
+		'engineWebKit' => 'webkit',
+		'deviceMacPpc' => 'macintosh', //Used for disambiguation
+		'deviceWindows' => 'windows',
+		'devicePpc' => 'ppc', //Stands for PocketPC
+		'linux' => 'linux',
+	);
+
 	//Initialize some initial smartphone string variables.
 	var $mobileStrings = array(
 		'engineWebKit' => 'webkit',
@@ -237,8 +246,7 @@ class uagent_info
 	{
 		if (!$this->previously_detected)
 		{
-			$match = implode('|', $this->mobileStrings);
-			echo "<pre>" . '~(' . $match . ')~i' . "</pre>";
+			$match = implode('|', array_diff($this->mobileStrings, $this->genericStrings));
 			$this->is_mobile = preg_match('~(' . $match . ')~i', $this->useragent);
 			$this->previously_detected = true;
 		}
