@@ -21,14 +21,18 @@
 	<version>0.1.0</version>
 	<type>modification</type>
 	<install for="2.0 - 2.0.99">
+		<modification>modification.xml</modification>
+		<modification>lang.xml</modification>
+		<modification>lang-utf8.xml</modification>
 		<require-file name="Subs-MobileDetect.php" destination="$sourcedir" />
-		<require-dir name="languages" destination="$languagedir" />
 		<redirect url="?action=admin;area=theme;sa=admin" />
 		<code>install.php</code>
 	</install>
 	<uninstall for="2.0 - 2.0.99">
+		<modification reverse="true">modification.xml</modification>
+		<modification reverse="true">lang.xml</modification>
+		<modification reverse="true">lang-utf8.xml</modification>
 		<remove-file name="$sourcedir/Subs-MobileDetect.php" />
-		<remove-dir name="$languagedir/MobileDetect" />
 		<redirect url="?action=admin;area=packages" />
 		<code>install.php</code>
 	</uninstall>

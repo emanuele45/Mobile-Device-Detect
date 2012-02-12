@@ -1,4 +1,15 @@
 <?php
+/**
+ * Mobile Device Detect (MDD)
+ *
+ * @package MDD
+ * @author emanuele
+ * @copyright the class uagent_info is copyright of Anthony Hand (see Subs-MobileDetect.php for details)
+ * @copyright 2012 emanuele, Simple Machines
+ * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache License 2.0 (AL2)
+ *
+ * @version 0.1.0
+ */
 
 /**
  *
@@ -14,10 +25,7 @@ function setThemeForMobileDevices()
 	if (!isset($context['device']))
 		$context['device'] = New uagent_info();
 
-	if ($context['device']->isMobile())
-		echo "YES";
-
-	if (!$context['device']->isMobile() && empty($_SESSION['id_theme']) && !empty($modSettings['mobile_theme_id']))
+	if ($context['device']->isMobile() && empty($_SESSION['id_theme']) && isset($modSettings['mobile_theme_id']))
 	{
 		$_SESSION['id_theme'] = $modSettings['mobile_theme_id'];
 		// On-the-fly override settings...hope is enough...
@@ -110,6 +118,7 @@ class uagent_info
 		'deviceWindows' => 'windows',
 		'devicePpc' => 'ppc', //Stands for PocketPC
 		'linux' => 'linux',
+		'engineOpera' => 'opera', //Popular browser
 	);
 
 	//Initialize some initial smartphone string variables.

@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<license>
+<!--
+/**
+ * Mobile Device Detect (MDD)
+ *
+ * @package MDD
+ * @author emanuele
+ * @copyright the class uagent_info is copyright of Anthony Hand (see Subs-MobileDetect.php for details)
+ * @copyright 2012 emanuele, Simple Machines
+ * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache License 2.0 (AL2)
+ *
+ * @version 0.1.0
+ */
+-->
+	</license>
+	<id>emanuele:mobiledevicedetect</id>
+	<name>Mobile Device Detect</name>
+	<version>0.1.0</version>
+	<file name="$sourcedir/Themes.php">
+		<operation>
+			<search position="before"><![CDATA[
+		$_GET['th'] = (int) $_GET['th'];]]></search>
+			<add><![CDATA[
+
+		if ($_REQUEST['u'] == -2)
+		{
+			// 0 is legal! It's the default theme
+			updateSettings(array('mobile_theme_id' => $_GET['th']));
+
+			redirectexit('action=admin;area=theme;sa=admin');
+		}
+]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+	// Someones else :P.]]></search>
+			<add><![CDATA[
+	elseif ($_REQUEST['u'] == '-2')
+	{
+		$context['current_member'] = -2;
+		$context['current_theme'] = isset($modSettings['mobile_theme_id']) ? $modSettings['mobile_theme_id'] : 0;
+	}]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+		redirectexit('action=admin;area=theme;' . $context['session_var'] . '=' . $context['session_id'] . ';sa=admin');
+]]></search>
+			<add><![CDATA[		if ((int) $_POST['mobile_theme_id'] == 0 || in_array($_POST['mobile_theme_id'], $_POST['options']['known_themes']))
+			updateSettings(array('mobile_theme_id' => (int) $_POST['mobile_theme_id']));
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$themedir/Themes.template.php">
+		<operation>
+			<search position="after"><![CDATA[
+						</dd>
+					</dl>
+					<div class="righttext">
+]]></search>
+			<add><![CDATA[
+						</dd>
+						<dt>
+							<label for="mobile_theme_id">', $txt['mobile_theme_id'], ':</label>
+						</dt>
+						<dd>
+							<select name="mobile_theme_id" id="mobile_theme_id">';
+
+	// Put an option for each theme in the select box.
+	foreach ($context['themes'] as $theme)
+		echo '
+								<option value="', $theme['id'], '"', !empty($modSettings['mobile_theme_id']) && $modSettings['mobile_theme_id'] == $theme['id'] ? ' selected="selected"' : '', '>', $theme['name'], '</option>';
+
+	echo '
+							</select>
+							<span class="smalltext pick_theme"><a href="', $scripturl, '?action=theme;sa=pick;u=-2;', $context['session_var'], '=', $context['session_id'], '">', $txt['theme_select'], '</a></span>]]></add>
+		</operation>
+	</file>
+</modification>

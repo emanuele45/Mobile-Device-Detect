@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<license>
+<!--
+/**
+ * Mobile Device Detect (MDD)
+ *
+ * @package MDD
+ * @author emanuele
+ * @copyright the class uagent_info is copyright of Anthony Hand (see Subs-MobileDetect.php for details)
+ * @copyright 2012 emanuele, Simple Machines
+ * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache License 2.0 (AL2)
+ *
+ * @version 0.1.0
+ */
+-->
+	</license>
+	<id>emanuele:mobiledevicedetect</id>
+	<name>Mobile Device Detect</name>
+	<version>0.1.0</version>
+	<file name="$languagedir/Modifications.english-utf8.php" error="skip">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+$txt['mobile_theme_id'] = 'Theme to use for mobile devices';
+]]></add>
+		</operation>
+	</file>
+</modification>
