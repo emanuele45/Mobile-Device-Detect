@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<license>
+<!--
+/**
+ * Mobile Device Detect (MDD)
+ *
+ * @package MDD
+ * @author emanuele
+ * @copyright the class uagent_info is copyright of Anthony Hand (see Subs-MobileDetect.php for details)
+ * @copyright 2012 emanuele, Simple Machines
+ * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache License 2.0 (AL2)
+ *
+ * @version 0.1.0
+ */
+-->
+	</license>
+	<id>emanuele:mobiledevicedetect</id>
+	<name>Mobile Device Detect</name>
+	<version>0.1.0</version>
+	<type>modification</type>
+	<install for="2.0 - 2.0.99">
+		<require-file name="Subs-MobileDetect.php" destination="$sourcedir" />
+		<require-dir name="languages" destination="$languagedir" />
+		<redirect url="?action=admin;area=theme;sa=admin" />
+		<code>install.php</code>
+	</install>
+	<uninstall for="2.0 - 2.0.99">
+		<remove-file name="$sourcedir/Subs-MobileDetect.php" />
+		<remove-dir name="$languagedir/MobileDetect" />
+		<redirect url="?action=admin;area=packages" />
+		<code>install.php</code>
+	</uninstall>
+</package-info>
