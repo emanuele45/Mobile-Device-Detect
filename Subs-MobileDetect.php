@@ -9,11 +9,15 @@
 
 function setThemeForMobileDevices()
 {
-	global $modSettings;
+	global $modSettings, $context;
 
-	$device = New uagent_info();
+	if (!isset($context['device']))
+		$context['device'] = New uagent_info();
 
-	if (!$device->isMobile && empty($_SESSION['id_theme']) && !empty($modSettings['mobile_theme_id']))
+	if ($context['device']->isMobile())
+		echo "YES";
+
+	if (!$context['device']->isMobile() && empty($_SESSION['id_theme']) && !empty($modSettings['mobile_theme_id']))
 	{
 		$_SESSION['id_theme'] = $modSettings['mobile_theme_id'];
 		// On-the-fly override settings...hope is enough...
@@ -100,7 +104,7 @@ class uagent_info
 	var $isTierGenericMobile = 0; //Stores whether it is another mobile device, which cannot be assumed to support CSS or JS (eg, older BlackBerry, RAZR)
 
 	//Initialize some initial smartphone string variables.
-	$mobileStrings = array(
+	var $mobileStrings = array(
 		'engineWebKit' => 'webkit',
 		'deviceIphone' => 'iphone',
 		'deviceIpod' => 'ipod',
@@ -197,6 +201,10 @@ class uagent_info
 	//Disambiguation strings.
 	var $disUpdate = "update"; //pda vs. update
 
+	// We don't know the device so we assume it's not a mobile-thing
+	var $device = '';
+	var $is_mobile = false;
+	var $previously_detected = false;
 
 	/**
 	 * The constructor. Allows the latest PHP (5.0+) to locate a constructor object and initialize the object.
@@ -214,11 +222,30 @@ class uagent_info
 	{
 		$this->useragent = isset($_SERVER['HTTP_USER_AGENT'])?strtolower($_SERVER['HTTP_USER_AGENT']):'';
 		$this->httpaccept = isset($_SERVER['HTTP_ACCEPT'])?strtolower($_SERVER['HTTP_ACCEPT']):'';
-		
-		//Let's initialize some values to save cycles later.
-		$this->InitDeviceScan();
 	}
-	
+
+	function getDevice()
+	{
+		if (empty($this->device))
+			//Let's initialize some values to save cycles later.
+			$this->InitDeviceScan();
+
+		return $this->device;
+	}
+
+	function isMobile()
+	{
+		if (!$this->previously_detected)
+		{
+			$match = implode('|', $this->mobileStrings);
+			echo "<pre>" . '~(' . $match . ')~i' . "</pre>";
+			$this->is_mobile = preg_match('~(' . $match . ')~i', $this->useragent);
+			$this->previously_detected = true;
+		}
+
+		return $this->is_mobile;
+	}
+
 	/**
 	 * Initialize Key Stored Values.
 	 */
@@ -260,7 +287,7 @@ class uagent_info
 	 */
 	function DetectIphone()
 	{
-		if (stripos($this->useragent, $this->mobileStrings['mobileStrings['deviceIphone']']) > -1)
+		if (stripos($this->useragent, $this->mobileStrings['deviceIphone']) > -1)
 		{
 			//The iPad and iPod Touch say they're an iPhone. So let's disambiguate.
 			if ($this->DetectIpad() == $this->true || $this->DetectIpod() == $this->true)
@@ -278,7 +305,7 @@ class uagent_info
 	 */
 	function DetectIpod()
 	{
-		if (stripos($this->useragent, $this->mobileStrings['mobileStrings['deviceIpod']']) > -1)
+		if (stripos($this->useragent, $this->mobileStrings['deviceIpod']) > -1)
 			return $this->true;
 		else
 			return $this->false;
@@ -289,7 +316,7 @@ class uagent_info
 	 */
 	function DetectIpad()
 	{
-		if (stripos($this->useragent, $this->mobileStrings['mobileStrings['deviceIpad']']) > -1 && $this->DetectWebkit() == $this->true)
+		if (stripos($this->useragent, $this->mobileStrings['deviceIpad']) > -1 && $this->DetectWebkit() == $this->true)
 			return $this->true;
 		else
 			return $this->false;
@@ -301,7 +328,7 @@ class uagent_info
 	function DetectIphoneOrIpod()
 	{
 		//We repeat the searches here because some iPods may report themselves as an iPhone, which would be okay.
-		if (stripos($this->useragent, $this->mobileStrings['mobileStrings['deviceIphone']']) > -1 || stripos($this->useragent, $this->mobileStrings['mobileStrings['deviceIpod']']) > -1)
+		if (stripos($this->useragent, $this->mobileStrings['deviceIphone']) > -1 || stripos($this->useragent, $this->mobileStrings['deviceIpod']) > -1)
 			return $this->true;
 		else
 			return $this->false;
@@ -325,10 +352,10 @@ class uagent_info
 	 */
 	function DetectAndroid()
 	{
-		if ((stripos($this->useragent, $this->mobileStrings['mobileStrings['deviceAndroid']']) > -1) || ($this->DetectGoogleTV() == $this->true))
+		if ((stripos($this->useragent, $this->mobileStrings['deviceAndroid']) > -1) || ($this->DetectGoogleTV() == $this->true))
 			return $this->true;
 		//Special check for the HTC Flyer 7" tablet
-		if ((stripos($this->useragent, $this->mobileStrings['mobileStrings['deviceHtcFlyer']']) > -1))
+		if ((stripos($this->useragent, $this->mobileStrings['deviceHtcFlyer']) > -1))
 			return $this->true;
 		else
 			return $this->false;
@@ -342,13 +369,13 @@ class uagent_info
 	 */
 	function DetectAndroidPhone()
 	{
-		if (($this->DetectAndroid() == $this->true) && (stripos($this->useragent, $this->mobileStrings['mobileStrings['mobile']']) > -1))
+		if (($this->DetectAndroid() == $this->true) && (stripos($this->useragent, $this->mobileStrings['mobile']) > -1))
 			return $this->true;
 		//Special check for Android phones with Opera Mobile. They should report here.
 		if (($this->DetectOperaAndroidPhone() == $this->true))
 			return $this->true;
 		//Special check for the HTC Flyer 7" tablet. It should report here.
-		if ((stripos($this->useragent, $this->mobileStrings['mobileStrings['deviceHtcFlyer']']) > -1))
+		if ((stripos($this->useragent, $this->mobileStrings['deviceHtcFlyer']) > -1))
 			return $this->true;
 		else
 			return $this->false;
@@ -368,11 +395,11 @@ class uagent_info
 		if ($this->DetectOperaMobile() == $this->true)
 			return $this->false;
 		//Special check for the HTC Flyer 7" tablet. It should NOT report here.
-		if ((stripos($this->useragent, $this->mobileStrings['mobileStrings['deviceHtcFlyer']']) > -1))
+		if ((stripos($this->useragent, $this->mobileStrings['deviceHtcFlyer']) > -1))
 			return $this->false;
 				
 		//Otherwise, if it's Android and does NOT have 'mobile' in it, Google says it's a tablet.
-		if (stripos($this->useragent, $this->mobileStrings['mobileStrings['mobile']']) > -1)
+		if (stripos($this->useragent, $this->mobileStrings['mobile']) > -1)
 			return $this->false;
 		else
 			return $this->true;
@@ -395,7 +422,7 @@ class uagent_info
 	 */
 	function DetectGoogleTV()
 	{
-		if (stripos($this->useragent, $this->mobileStrings['mobileStrings['deviceGoogleTV']']) > -1)
+		if (stripos($this->useragent, $this->mobileStrings['deviceGoogleTV']) > -1)
 			return $this->true;
 		else
 			return $this->false;
@@ -406,7 +433,7 @@ class uagent_info
 	 */
 	function DetectWebkit()
 	{
-		if (stripos($this->useragent, $this->mobileStrings['mobileStrings['engineWebKit']']) > -1)
+		if (stripos($this->useragent, $this->mobileStrings['engineWebKit']) > -1)
 			return $this->true;
 		else
 			return $this->false;
@@ -421,7 +448,7 @@ class uagent_info
 		//First, test for WebKit, then make sure it's either Symbian or S60.
 		if ($this->DetectWebkit() == $this->true)
 		{
-			if (stripos($this->useragent, $this->mobileStrings['mobileStrings['deviceSymbian']']) > -1 || stripos($this->useragent, $this->mobileStrings['mobileStrings['deviceS60']']) > -1)
+			if (stripos($this->useragent, $this->mobileStrings['deviceSymbian']) > -1 || stripos($this->useragent, $this->mobileStrings['deviceS60']) > -1)
 				return $this->true;
 			else
 				return $this->false;
@@ -437,11 +464,11 @@ class uagent_info
 	 */
 	function DetectSymbianOS()
 	{
-		if (stripos($this->useragent, $this->mobileStrings['mobileStrings['deviceSymbian']']) > -1 ||
-				stripos($this->useragent, $this->mobileStrings['mobileStrings['deviceS60']']) > -1 ||
-				stripos($this->useragent, $this->mobileStrings['mobileStrings['deviceS70']']) > -1 ||
-				stripos($this->useragent, $this->mobileStrings['mobileStrings['deviceS80']']) > -1 ||
-				stripos($this->useragent, $this->mobileStrings['mobileStrings['deviceS90']']) > -1)
+		if (stripos($this->useragent, $this->mobileStrings['deviceSymbian']) > -1 ||
+				stripos($this->useragent, $this->mobileStrings['deviceS60']) > -1 ||
+				stripos($this->useragent, $this->mobileStrings['deviceS70']) > -1 ||
+				stripos($this->useragent, $this->mobileStrings['deviceS80']) > -1 ||
+				stripos($this->useragent, $this->mobileStrings['deviceS90']) > -1)
 			return $this->true;
 		else
 			return $this->false;
