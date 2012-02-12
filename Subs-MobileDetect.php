@@ -13,11 +13,16 @@
 
 /**
  *
- * @todo create admin panel:
- *   - a select box in "Manage and Install" to select the mobile theme
- *   - an option in "Theme Settings" to check as default for mobile (and deselct all the others)
+ * Simple function for the hook
+ * Instantiate the uagent_info and place it into $context['device']
+ *   if anyone want to use it later.
+ * This function doesn't initialize all the detection of the class,
+ *   only the generic method isMobile() is used.
+ * In order to detect exactly the device, the method getDevice() should be used.
+ * 
+ * @return nothing
+ * 
  */
-
 function setThemeForMobileDevices()
 {
 	global $modSettings, $context;
