@@ -21,68 +21,67 @@ function setThemeForMobileDevices()
 	}
 }
 
-/* *******************************************
-// Copyright 2010-2012, Anthony Hand
-//
-// File version date: January 21, 2012
-//              Update: 
-//              - Added the constructor method per new features in PHP 5.0: __construct(). 
-//              - Moved Windows Phone 7 to the iPhone Tier. WP7.5's IE 9-based browser is good enough now.  
-//              - Added a new variable for 2 versions of the new BlackBerry Bold Touch (9900 and 9930): deviceBBBoldTouch. 
-//              - Updated DetectBlackBerryTouch() to support the 2 versions of the new BlackBerry Bold Touch (9900 and 9930). 
-//              - Updated DetectKindle() to focus on eInk devices only. The Kindle Fire should be detected as a regular Android device.
-//
-// File version date: August 22, 2011
-//              Update: 
-//              - Updated DetectAndroidTablet() to fix a bug introduced in the last fix! The true/false returns were mixed up. 
-//
-// File version date: August 16, 2011
-//              Update: 
-//              - Updated DetectAndroidTablet() to exclude Opera Mini, which was falsely reporting as running on a tablet device when on a phone.
-//
-// File version date: August 7, 2011
-//              Update: 
-//              - The Opera for Android browser doesn't follow Google's recommended useragent string guidelines, so some fixes were needed.
-//              - Updated DetectAndroidPhone() and DetectAndroidTablet() to properly detect devices running Opera Mobile.
-//              - Created 2 new methods: DetectOperaAndroidPhone() and DetectOperaAndroidTablet(). 
-//              - Updated DetectTierIphone(). Removed the call to DetectMaemoTablet(), an obsolete mobile OS.
-//
-//
-// LICENSE INFORMATION
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-//        http://www.apache.org/licenses/LICENSE-2.0 
-// Unless required by applicable law or agreed to in writing, 
-// software distributed under the License is distributed on an 
-// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
-// either express or implied. See the License for the specific 
-// language governing permissions and limitations under the License. 
-//
-//
-// ABOUT THIS PROJECT
-//   Project Owner: Anthony Hand
-//   Email: anthony.hand@gmail.com
-//   Web Site: http://www.mobileesp.com
-//   Source Files: http://code.google.com/p/mobileesp/
-//   
-//   Versions of this code are available for:
-//      PHP, JavaScript, Java, ASP.NET (C#), and Ruby
-//
-// *******************************************
-*/
+/**
+ * Copyright 2010-2012, Anthony Hand
+ *
+ * Class version date: January 21, 2012
+ *              Update: 
+ *              - Added the constructor method per new features in PHP 5.0: __construct(). 
+ *              - Moved Windows Phone 7 to the iPhone Tier. WP7.5's IE 9-based browser is good enough now.  
+ *              - Added a new variable for 2 versions of the new BlackBerry Bold Touch (9900 and 9930): deviceBBBoldTouch. 
+ *              - Updated DetectBlackBerryTouch() to support the 2 versions of the new BlackBerry Bold Touch (9900 and 9930). 
+ *              - Updated DetectKindle() to focus on eInk devices only. The Kindle Fire should be detected as a regular Android device.
+ *
+ * Class version date: August 22, 2011
+ *              Update: 
+ *              - Updated DetectAndroidTablet() to fix a bug introduced in the last fix! The true/false returns were mixed up. 
+ *
+ * Class version date: August 16, 2011
+ *              Update: 
+ *              - Updated DetectAndroidTablet() to exclude Opera Mini, which was falsely reporting as running on a tablet device when on a phone.
+ *
+ * Class version date: August 7, 2011
+ *              Update: 
+ *              - The Opera for Android browser doesn't follow Google's recommended useragent string guidelines, so some fixes were needed.
+ *              - Updated DetectAndroidPhone() and DetectAndroidTablet() to properly detect devices running Opera Mobile.
+ *              - Created 2 new methods: DetectOperaAndroidPhone() and DetectOperaAndroidTablet(). 
+ *              - Updated DetectTierIphone(). Removed the call to DetectMaemoTablet(), an obsolete mobile OS.
+ *
+ *
+ * LICENSE INFORMATION
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ *        http://www.apache.org/licenses/LICENSE-2.0 
+ * Unless required by applicable law or agreed to in writing, 
+ * software distributed under the License is distributed on an 
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+ * either express or implied. See the License for the specific 
+ * language governing permissions and limitations under the License. 
+ *
+ *
+ * ABOUT uagent_info PROJECT
+ *   uagent_info Owner: Anthony Hand
+ *   Email: anthony.hand@gmail.com
+ *   Web Site: http://www.mobileesp.com
+ *   Source Files: http://code.google.com/p/mobileesp/
+ *   
+ *   Versions of this code are available for:
+ *      PHP, JavaScript, Java, ASP.NET (C#), and Ruby
+ *
+ * *******************************************
+ */
 
-
-
-//**************************
-// The uagent_info class encapsulates information about
-//   a browser's connection to your web site. 
-//   You can use it to find out whether the browser asking for
-//   your site's content is probably running on a mobile device.
-//   The methods were written so you can be as granular as you want.
-//   For example, enquiring whether it's as specific as an iPod Touch or
-//   as general as a smartphone class device.
-//   The object's methods return 1 for true, or 0 for false.
+/**
+ * The uagent_info class encapsulates information about
+ *   a browser's connection to your web site. 
+ *   You can use it to find out whether the browser asking for
+ *   your site's content is probably running on a mobile device.
+ *   The methods were written so you can be as granular as you want.
+ *   For example, enquiring whether it's as specific as an iPod Touch or
+ *   as general as a smartphone class device.
+ *   The object's methods return 1 for true, or 0 for false.
+ */
 class uagent_info
 {
    var $useragent = "";
