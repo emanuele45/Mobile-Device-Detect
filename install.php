@@ -24,8 +24,8 @@ $hooks = array(
 if (SMF == 'SSI' && (!isset($_GET['action']) || (isset($_GET['action']) && !in_array($_GET['action'], array('install', 'uninstall')))))
 	echo '
 		Please select the action you want to perform:<br />
-		<a href="' . $boardurl . 'install.php?action=install">Install</a><br />
-		<a href="' . $boardurl . 'install.php?action=uninstall">Uninstall</a>';
+		<a href="' . $boardurl . '/install.php?action=install">Install</a><br />
+		<a href="' . $boardurl . '/install.php?action=uninstall">Uninstall</a>';
 else
 {
 	$context['uninstalling'] = isset($context['uninstalling']) ? $context['uninstalling'] : (isset($_GET['action']) && $_GET['action'] == 'uninstall' ? true : false);
