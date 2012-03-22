@@ -4,41 +4,187 @@
  *
  * @package MDD
  * @author emanuele
+ * @2nd author feline
  * @copyright the class uagent_info is copyright of Anthony Hand (see Subs-MobileDetect.php for details)
- * @copyright 2012 emanuele, Simple Machines
+ * @copyright 2012 feline, emanuele, Simple Machines
  * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache License 2.0 (AL2)
  *
- * @version 0.1.0
+ * @version 0.2.0
  */
 
 /**
- *
  * Simple function for the hook
- * Instantiate the uagent_info and place it into $context['device']
- *   if anyone want to use it later.
- * This function doesn't initialize all the detection of the class,
- *   only the generic method isMobile() is used.
- * In order to detect exactly the device, the method getDevice() should be used.
- * 
- * @return nothing
- * 
+ * Since I'm missusing integrate_verify_user the function SHALL not return anything!
  */
 function setThemeForMobileDevices()
 {
-	global $modSettings, $context;
+	global $modSettings;
 
-	if (!isset($context['device']))
-		$context['device'] = New uagent_info();
-
-	if ($context['device']->isMobile() && empty($_SESSION['id_theme']) && isset($modSettings['mobile_theme_id']))
+	// Reasoning:
+	//   * if the user has already a session with a theme fine, don't need to mess with it
+	//   * if the mobile theme is not set it's useless to check
+	//   * CheckIsMobile already takes care to see if $context['MobilDevice'] is set
+	if (!isset($_SESSION['id_theme']) && isset($modSettings['mobile_theme_id']) && CheckIsMobile())
 	{
 		$_SESSION['id_theme'] = $modSettings['mobile_theme_id'];
-		// On-the-fly override settings...hope is enough...
+		// On-the-fly override settings (i.e. if admins didn't set allow change themes)
 		$modSettings['theme_allow'] = true;
 	}
 }
 
 /**
+ * This function checks if the current user is using a mobile device
+ * 
+ * It also populates the array $context['MobilDevices'] with:
+ *   'isMobile' => (bool) true/false,
+ *   'device' => (array) list of detected devices,
+ * 
+ * @param: $device, boolean - if true the function returns the device name (array),
+ *                            if false returns only if is mobile or not (true/false)
+ * @return: boolean true if the user is using a mobile device, false if not
+ */
+function CheckIsMobile($device = false)
+{
+	global $context;
+
+	if(isset($context['MobilDevice']))
+	{
+		if ($device)
+			return $context['MobilDevice']['device'];
+		else
+			return $context['MobilDevice']['isMobile'];
+	}
+
+	$useragent = isset($_SERVER['HTTP_USER_AGENT']) ? strtolower($_SERVER['HTTP_USER_AGENT']) : '';
+	$context['MobilDevice'] = array(
+		'isMobile' => false,
+		'device' => array(),
+	);
+
+	// These strings cannot be used in isMobile because are way too generic
+	$genericStrings = array(
+		'engineWebKit' => 'webkit',
+		'deviceMacPpc' => 'macintosh', //Used for disambiguation
+		'deviceWindows' => 'windows',
+		'devicePpc' => 'ppc', //Stands for PocketPC
+		'linux' => 'linux',
+		'engineOpera' => 'opera', //Popular browser
+	);
+
+	//Initialize some initial smartphone string variables.
+	$mobileStrings = array(
+		'engineWebKit' => 'webkit',
+		'deviceIphone' => 'iphone',
+		'deviceIpod' => 'ipod',
+		'deviceIpad' => 'ipad',
+		'deviceMacPpc' => 'macintosh', //Used for disambiguation
+
+		'deviceAndroid' => 'android',
+		'deviceGoogleTV' => 'googletv',
+		'deviceXoom' => 'xoom', //Motorola Xoom
+		'deviceHtcFlyer' => 'htc_flyer', //HTC Flyer
+		'deviceNuvifone' => 'nuvifone', //Garmin Nuvifone
+		'deviceGTI9000' => 'gt-i9000', //Samsung Galaxy I9000
+
+		'deviceSymbian' => 'symbian',
+		'deviceS60' => 'series60',
+		'deviceS70' => 'series70',
+		'deviceS80' => 'series80',
+		'deviceS90' => 'series90',
+
+		'deviceWinPhone7' => 'windows phone os 7',
+		'deviceWinMob' => 'windows ce',
+		'deviceWindows' => 'windows',
+		'deviceIeMob' => 'iemobile',
+		'devicePpc' => 'ppc', //Stands for PocketPC
+		'enginePie' => 'wm5 pie', //An old Windows Mobile
+
+		'deviceBB' => 'blackberry',
+		'vndRIM' => 'vnd.rim', //Detectable when BB devices emulate IE or Firefox
+		'deviceBBStorm' => 'blackberry95',  //Storm 1 and 2
+		'deviceBBBold' => 'blackberry97', //Bold 97x0 (non-touch)
+		'deviceBBBoldTouch' => 'blackberry 99', //Bold 99x0 (touchscreen)
+		'deviceBBTour' => 'blackberry96', //Tour
+		'deviceBBCurve' => 'blackberry89', //Curve2
+		'deviceBBTorch' => 'blackberry 98', //Torch
+		'deviceBBPlaybook' => 'playbook', //PlayBook tablet
+
+		'devicePalm' => 'palm',
+		'deviceWebOS' => 'webos', //For Palm's line of WebOS devices
+		'deviceWebOShp' => 'hpwos', //For HP's line of WebOS devices
+
+		'engineBlazer' => 'blazer', //Old Palm browser
+		'engineXiino' => 'xiino', //Another old Palm
+
+		'deviceKindle' => 'kindle', //Amazon Kindle, eInk one.
+
+		//Initialize variables for mobile-specific content.
+		'vndwap' => 'vnd.wap',
+		'wml' => 'wml',
+
+		//Initialize variables for other random devices and mobile browsers.
+		'deviceTablet' => 'tablet', //Generic term for slate and tablet devices
+		'deviceBrew' => 'brew',
+		'deviceDanger' => 'danger',
+		'deviceHiptop' => 'hiptop',
+		'devicePlaystation' => 'playstation',
+		'deviceNintendoDs' => 'nitro',
+		'deviceNintendo' => 'nintendo',
+		'deviceWii' => 'wii',
+		'deviceXbox' => 'xbox',
+		'deviceArchos' => 'archos',
+
+		'engineOpera' => 'opera', //Popular browser
+		'engineNetfront' => 'netfront', //Common embedded OS browser
+		'engineUpBrowser' => 'up.browser', //common on some phones
+		'engineOpenWeb' => 'openweb', //Transcoding by OpenWave server
+		'deviceMidp' => 'midp', //a mobile Java technology
+		'uplink' => 'up.link',
+		'engineTelecaQ' => 'teleca q', //a modern feature phone browser
+
+		'devicePda' => 'pda', //some devices report themselves as PDAs
+		'mini' => 'mini',  //Some mobile browsers put 'mini' in their names.
+		'mobile' => 'mobile', //Some mobile browsers put 'mobile' in their user agent strings.
+		'mobi' => 'mobi', //Some mobile browsers put 'mobi' in their user agent strings.
+
+		//Use Maemo, Tablet, and Linux to test for Nokia's Internet Tablets.
+		'maemo' => 'maemo',
+		'linux' => 'linux',
+		'qtembedded' => 'qt embedded', //for Sony Mylo and others
+		'mylocom2' => 'com2', //for Sony Mylo also
+
+		//In some UserAgents, the only clue is the manufacturer.
+		'manuSonyEricsson' => 'sonyericsson',
+		'manuericsson' => 'ericsson',
+		'manuSamsung1' => 'sec-sgh',
+		'manuSony' => 'sony',
+		'manuHtc' => 'htc', //Popular Android and WinMo manufacturer
+
+		//In some UserAgents, the only clue is the operator.
+		'svcDocomo' => 'docomo',
+		'svcKddi' => 'kddi',
+		'svcVodafone' => 'vodafone',
+	);
+
+	$find = implode('|', array_diff($mobileStrings, $genericStrings));
+	if(preg_match_all('~(' . $find . ')~i', $useragent, $tmp))
+	{
+		$context['MobilDevice'] = array(
+			'isMobile' => true,
+			'device' => $tmp[1]
+		);
+	}
+
+	if ($device)
+		return $context['MobilDevice']['device'];
+	else
+		return $context['MobilDevice']['isMobile'];
+}
+
+/**
+ * Compared to the original class I (emanuele) slightly changed the strcture of the "detection strings"
+ * in order to facilitate the use in the newly introduced function isMobile.
+ * 
  * Copyright 2010-2012, Anthony Hand
  *
  * Class version date: January 21, 2012
