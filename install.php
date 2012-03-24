@@ -8,7 +8,7 @@
  * @copyright 2012 emanuele, Simple Machines
  * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache License 2.0 (AL2)
  *
- * @version 0.2.0
+ * @version 0.2.1
  */
 
 if (file_exists(dirname(__FILE__) . '/SSI.php') && !defined('SMF'))

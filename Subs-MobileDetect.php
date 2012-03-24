@@ -9,7 +9,7 @@
  * @copyright 2012 feline, emanuele, Simple Machines
  * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache License 2.0 (AL2)
  *
- * @version 0.2.0
+ * @version 0.2.1
  */
 
 /**
@@ -370,15 +370,6 @@ class uagent_info
 	var $device = '';
 	var $is_mobile = false;
 	var $previously_detected = false;
-
-	/**
-	 * The constructor. Allows the latest PHP (5.0+) to locate a constructor object and initialize the object.
-	 */
-	function __construct()
-	{
-		$this->uagent_info();
-	}
-
 
 	/**
 	 * The object initializer. Initializes several default variables.
