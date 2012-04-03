@@ -20,20 +20,18 @@
 	<name>Mobile Device Detect</name>
 	<version>0.2.1</version>
 	<type>modification</type>
-	<install for="2.0 - 2.0.99">
+	<install for="1.1 - 1.1.99">
 		<modification>modification.xml</modification>
 		<modification>lang.xml</modification>
 		<modification>lang-utf8.xml</modification>
 		<require-file name="Subs-MobileDetect.php" destination="$sourcedir" />
 		<redirect url="?action=admin;area=theme;sa=admin" />
-		<code>install.php</code>
 	</install>
-	<uninstall for="2.0 - 2.0.99">
+	<uninstall for="1.1 - 1.1.99">
 		<modification reverse="true">modification.xml</modification>
 		<modification reverse="true">lang.xml</modification>
 		<modification reverse="true">lang-utf8.xml</modification>
 		<remove-file name="$sourcedir/Subs-MobileDetect.php" />
 		<redirect url="?action=admin;area=packages" />
-		<code>install.php</code>
 	</uninstall>
 </package-info>

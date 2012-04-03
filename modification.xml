@@ -46,7 +46,7 @@
 		</operation>
 		<operation>
 			<search position="after"><![CDATA[
-		redirectexit('action=admin;area=theme;' . $context['session_var'] . '=' . $context['session_id'] . ';sa=admin');
+		redirectexit('action=theme;sesc=' . $sc . ';sa=admin');
 ]]></search>
 			<add><![CDATA[		if (isset($_POST['mobile_theme_id']) && ((int) $_POST['mobile_theme_id'] == 0 || in_array($_POST['mobile_theme_id'], $_POST['options']['known_themes'])))
 			updateSettings(array('mobile_theme_id' => (int) $_POST['mobile_theme_id']));
@@ -54,29 +54,43 @@
 		</operation>
 	</file>
 
+	<file name="$sourcedir/Load.php">
+		<operation>
+			<search position="replace"><![CDATA[;
+
+	// Check first the integration, then the cookie, and last the session.]]></search>
+			<add><![CDATA[, $sourcedir;
+
+	require_once($sourcedir . '/Subs-MobileDetect.php');
+	setThemeForMobileDevices();
+
+	// Check first the integration, then the cookie, and last the session.]]></add>
+		</operation>
+	</file>
+
 	<file name="$themedir/Themes.template.php">
 		<operation>
-			<search position="after"><![CDATA[
-						</dd>
-					</dl>
-					<div class="righttext">
-]]></search>
+			<search position="before"><![CDATA[
+					<td class="smalltext">&nbsp; <a href="', $scripturl, '?action=theme;sa=pick;u=0;sesc=', $context['session_id'], '">', $txt['theme_select'], '</a></td>
+				</tr>
+				<tr class="windowbg2">]]></search>
 			<add><![CDATA[
-						</dd>
-						<dt>
-							<label for="mobile_theme_id">', $txt['mobile_theme_id'], ':</label>
-						</dt>
-						<dd>
-							<select name="mobile_theme_id" id="mobile_theme_id">';
+					<td style="width: 20ex;">', $txt['mobile_theme_id'], ':</td>
+					<td>
+						<select name="mobile_theme_id" id="mobile_theme_id">';
 
 	// Put an option for each theme in the select box.
 	foreach ($context['themes'] as $theme)
-		echo '
-								<option value="', $theme['id'], '"', !empty($modSettings['mobile_theme_id']) && $modSettings['mobile_theme_id'] == $theme['id'] ? ' selected="selected"' : '', '>', $theme['name'], '</option>';
+	echo '
+							<option value="', $theme['id'], '"', !empty($modSettings['mobile_theme_id']) && $modSettings['mobile_theme_id'] == $theme['id'] ? ' selected="selected"' : '', '>', $theme['name'], '</option>';
 
 	echo '
-							</select>
-							<span class="smalltext pick_theme"><a href="', $scripturl, '?action=theme;sa=pick;u=-2;', $context['session_var'], '=', $context['session_id'], '">', $txt['theme_select'], '</a></span>]]></add>
+						</select>
+						<span class="smalltext pick_theme"><a href="', $scripturl, '?action=theme;sa=pick;u=-2;', $context['session_var'], '=', $context['session_id'], '">', $txt['theme_select'], '</a></span>
+					</td>
+				</tr>
+				<tr class="windowbg2">
+]]></add>
 		</operation>
 	</file>
 </modification>
