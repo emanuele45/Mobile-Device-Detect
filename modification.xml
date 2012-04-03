@@ -21,8 +21,8 @@
 	<version>0.2.1</version>
 	<file name="$sourcedir/Themes.php">
 		<operation>
-			<search position="before"><![CDATA[
-		$_GET['th'] = (int) $_GET['th'];]]></search>
+			<search position="after"><![CDATA[
+		// Save for this user.]]></search>
 			<add><![CDATA[
 
 		if ($_REQUEST['u'] == -2)
