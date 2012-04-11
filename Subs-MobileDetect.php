@@ -9,7 +9,7 @@
  * @copyright 2012 feline, emanuele, Simple Machines
  * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache License 2.0 (AL2)
  *
- * @version 0.2.1
+ * @version 0.2.2
  */
 
 /**
@@ -69,6 +69,7 @@ function CheckIsMobile($device = false)
 		'devicePpc' => 'ppc', //Stands for PocketPC
 		'linux' => 'linux',
 		'engineOpera' => 'opera', //Popular browser
+		'deviceTablet' => 'tablet', //Generic term for slate and tablet devices
 	);
 
 	//Initialize some initial smartphone string variables.
@@ -166,8 +167,8 @@ function CheckIsMobile($device = false)
 		'svcVodafone' => 'vodafone',
 	);
 
-	$find = implode('|', array_diff($mobileStrings, $genericStrings));
-	if(preg_match_all('~(' . $find . ')~i', $useragent, $tmp))
+	$find = implode('\b|', array_diff($mobileStrings, $genericStrings));
+	if(preg_match_all('~(' . $find . '\b)~i', $useragent, $tmp))
 	{
 		$context['MobilDevice'] = array(
 			'isMobile' => true,
@@ -266,6 +267,7 @@ class uagent_info
 		'devicePpc' => 'ppc', //Stands for PocketPC
 		'linux' => 'linux',
 		'engineOpera' => 'opera', //Popular browser
+		'deviceTablet' => 'tablet', //Generic term for slate and tablet devices
 	);
 
 	//Initialize some initial smartphone string variables.
@@ -393,8 +395,8 @@ class uagent_info
 	{
 		if (!$this->previously_detected)
 		{
-			$match = implode('|', array_diff($this->mobileStrings, $this->genericStrings));
-			$this->is_mobile = preg_match('~(' . $match . ')~i', $this->useragent);
+			$match = implode('\b|', array_diff($this->mobileStrings, $this->genericStrings));
+			$this->is_mobile = preg_match('~(' . $match . '\b)~i', $this->useragent);
 			$this->previously_detected = true;
 		}
 
