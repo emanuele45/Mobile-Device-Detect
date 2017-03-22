@@ -376,10 +376,15 @@ class uagent_info
 	/**
 	 * The object initializer. Initializes several default variables.
 	 */
-	function uagent_info()
+	public function __construct()
 	{
 		$this->useragent = isset($_SERVER['HTTP_USER_AGENT'])?strtolower($_SERVER['HTTP_USER_AGENT']):'';
 		$this->httpaccept = isset($_SERVER['HTTP_ACCEPT'])?strtolower($_SERVER['HTTP_ACCEPT']):'';
+	}
+	
+	public function uagent_info() 
+	{
+		self::__construct();
 	}
 
 	function getDevice()
